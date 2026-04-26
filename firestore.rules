@@ -1,0 +1,38 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Classes are public read-only
+    match /classes/{classId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    // Anyone can create a booking or ticket
+    match /bookings/{bookingId} {
+      allow create: if true;
+      allow read, update, delete: if false; // Only admins via Server SDK
+    }
+    
+    match /tickets/{ticketId} {
+      allow create: if true;
+      allow read, update, delete: if false; // Only admins via Server SDK
+    }
+    
+    // Chat logs are accessible if you know the sessionId
+    // We disable 'list' to prevent someone from iterating through all chats
+    match /chat_logs/{sessionId} {
+      allow get: if true;
+      allow create: if true;
+      allow update: if true; // To update lastUpdatedAt
+      allow list: if false; 
+      
+      match /messages/{messageId} {
+        allow read: if true;
+        allow create: if true; // Students and Admin can create
+        allow list: if true;   // Needed for the chat UI to show messages
+      }
+    }
+  }
+}
