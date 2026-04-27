@@ -26,8 +26,8 @@ Generative AI (Large Language Model) using **Google Gemini 3.1 Flash Lite** (via
 
 ### Justification Matrix
 - **Data:** We have structured data for all courses, pricing, and instructor availability.
-- **Pattern:** Customer support follows a predictable pattern: Greeting -> Info Retrieval -> Booking/Escalation.
-- **Business Value:** Expected 40% reduction in manual support tickets and 20% increase in lead conversion via 24/7 availability.
+- **Pattern:** Customer support follows a predictable pattern: Greeting -> Info Retrieval -> Booking/Escalation/Handover.
+- **Business Value:** Expected 40% reduction in manual support tickets. We implemented an **AI Conversion Rate** metric (Unique Sessions with Booking / Total Sessions) to track business impact in real-time.
 - **Feasibility:** Modern LLMs like Gemini provide excellent reasoning capabilities and are easy to integrate via API.
 
 ---
@@ -38,7 +38,8 @@ Generative AI (Large Language Model) using **Google Gemini 3.1 Flash Lite** (via
 2. **Data Processing:** Upon each request, the system retrieves the latest "Available Classes" and injects them into the LLM system prompt as context.
 3. **Model Interaction:** The Gemini model processes user intent against the provided context.
 4. **Action Parsing:** The system detects structured strings (e.g., `[ACTION:BOOKING]`) to trigger database writes for bookings or support tickets.
-5. **Output:** A streaming markdown response is sent back to the React-based chat interface.
+5. **Human Handover:** If the AI detects a complex request, it triggers `[ACTION:HANDOVER]`, alerting a human admin who can then take over the live chat in real-time.
+6. **Output:** A streaming markdown response is sent back to the React-based chat interface.
 
 ---
 

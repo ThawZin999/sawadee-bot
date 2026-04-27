@@ -120,23 +120,23 @@ export default function Home() {
   const isAdminActive = messages.some(m => m.role === "admin");
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 font-outfit p-4 sm:p-8">
-      <Card className="w-full max-w-2xl h-[85vh] flex flex-col shadow-sm border border-slate-200 overflow-hidden bg-white rounded-3xl">
-        <CardHeader className="bg-white border-b border-slate-100 p-6">
+    <div className="flex flex-col items-center justify-center min-h-[100dvh] sm:min-h-0 sm:h-screen bg-slate-50 font-outfit p-0 sm:p-4 md:p-8">
+      <Card className="w-full max-w-2xl h-[100dvh] sm:h-[85vh] flex flex-col shadow-none sm:shadow-sm border-0 sm:border border-slate-200 overflow-hidden bg-white rounded-none sm:rounded-3xl">
+        <CardHeader className="bg-white border-b border-slate-100 p-4 sm:p-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="bg-blue-50 p-2.5 rounded-full text-blue-600">
-                <Bot size={24} />
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="bg-blue-50 p-2 rounded-full text-blue-600 sm:p-2.5">
+                <Bot size={20} className="sm:w-6 sm:h-6" />
               </div>
               <div>
-                <CardTitle className="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
+                <CardTitle className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
                   SawadeeBot
                   <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                 </CardTitle>
                 <div className="flex items-center gap-2">
-                  <p className="text-xs text-slate-500 font-medium">ThaiTalk Language School</p>
+                  <p className="text-[10px] sm:text-xs text-slate-500 font-medium">ThaiTalk Language School</p>
                   {isAdminActive && (
-                    <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-100 text-[10px] h-4 px-1.5 animate-pulse">
+                    <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-100 text-[9px] sm:text-[10px] h-4 px-1.5 animate-pulse">
                       Admin Active
                     </Badge>
                   )}
@@ -144,14 +144,14 @@ export default function Home() {
               </div>
             </div>
             <Button variant="ghost" size="icon" className="text-slate-400 hover:text-slate-600">
-              <Info size={20} />
+              <Info size={18} className="sm:w-5 sm:h-5" />
             </Button>
           </div>
         </CardHeader>
         
         <CardContent className="flex-1 overflow-hidden p-0 bg-white">
-          <ScrollArea className="h-full px-6 py-8">
-            <div className="space-y-8">
+          <ScrollArea className="h-full px-4 py-6 sm:px-6 sm:py-8">
+            <div className="space-y-6 sm:space-y-8">
               {messages.map((m, i) => (
                 <ChatBubble key={i} role={m.role} content={m.content} />
               ))}
@@ -166,7 +166,7 @@ export default function Home() {
                     <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-slate-100 text-slate-500">
                       <Bot size={14} />
                     </div>
-                    <div className="p-4 rounded-2xl bg-slate-100 text-slate-400 rounded-tl-none border border-slate-50 flex items-center gap-2">
+                    <div className="p-3 sm:p-4 rounded-2xl bg-slate-100 text-slate-400 rounded-tl-none border border-slate-50 flex items-center gap-2">
                       <Loader2 size={14} className="animate-spin" />
                       <span className="text-xs font-medium">Typing...</span>
                     </div>
@@ -178,9 +178,9 @@ export default function Home() {
           </ScrollArea>
         </CardContent>
 
-        <CardFooter className="flex flex-col gap-4 p-6 bg-white border-t border-slate-100">
+        <CardFooter className="flex flex-col gap-3 sm:gap-4 p-4 sm:p-6 bg-white border-t border-slate-100">
           {!isLoading && (
-            <div className="flex flex-wrap gap-2 justify-center w-full">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center w-full">
               {[
                 "Available classes", 
                 "Pricing info", 
@@ -191,7 +191,7 @@ export default function Home() {
                 <button
                   key={chip}
                   onClick={() => handleSendMessage(chip)}
-                  className="px-3 py-1.5 text-xs font-medium bg-slate-50 text-slate-600 hover:bg-slate-100 rounded-full transition-colors border border-slate-200"
+                  className="px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-medium bg-slate-50 text-slate-600 hover:bg-slate-100 rounded-full transition-colors border border-slate-200"
                 >
                   {chip}
                 </button>
@@ -205,22 +205,23 @@ export default function Home() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
               disabled={isLoading}
-              className="bg-slate-50 border-slate-200 focus:bg-white text-slate-900 rounded-2xl h-12 pr-12 transition-all"
+              className="bg-slate-50 border-slate-200 focus:bg-white text-slate-900 rounded-2xl h-11 sm:h-12 pr-12 transition-all text-sm sm:text-base"
             />
             <Button 
               size="icon" 
               onClick={() => handleSendMessage()} 
               disabled={isLoading || !input.trim()}
-              className="absolute right-1 top-1 bottom-1 w-10 h-10 bg-blue-600 hover:bg-blue-700 rounded-xl text-white"
+              className="absolute right-1 top-1 bottom-1 w-9 h-9 sm:w-10 sm:h-10 bg-blue-600 hover:bg-blue-700 rounded-xl text-white transition-transform active:scale-95"
             >
-              <Send size={18} />
+              <Send size={16} className="sm:w-4.5 sm:h-4.5" />
             </Button>
           </div>
-          <p className="text-[10px] text-center text-slate-400 font-medium uppercase tracking-widest">
+          <p className="text-[9px] sm:text-[10px] text-center text-slate-400 font-medium uppercase tracking-widest">
             AI Assistant • ThaiTalk Language School
           </p>
         </CardFooter>
       </Card>
     </div>
+
   );
 }

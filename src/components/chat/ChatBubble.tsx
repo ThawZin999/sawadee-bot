@@ -14,15 +14,15 @@ export function ChatBubble({ role, content }: ChatBubbleProps) {
   const isAdmin = role === "admin";
   
   return (
-    <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
-      <div className={`flex gap-3 max-w-[85%] ${isUser ? "flex-row-reverse" : "flex-row"}`}>
-        <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+    <div className={`flex ${isUser ? "justify-end" : "justify-start"} mb-2`}>
+      <div className={`flex gap-2 sm:gap-3 max-w-[90%] sm:max-w-[85%] ${isUser ? "flex-row-reverse" : "flex-row"}`}>
+        <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shrink-0 ${
           isUser ? "bg-slate-800 text-white" : 
           isAdmin ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-500"
         }`}>
-          {isUser ? <User size={14} /> : <Bot size={14} />}
+          {isUser ? <User size={12} className="sm:w-3.5 sm:h-3.5" /> : <Bot size={12} className="sm:w-3.5 sm:h-3.5" />}
         </div>
-        <div className={`p-4 rounded-2xl text-[15px] leading-relaxed shadow-sm ${
+        <div className={`p-3 sm:p-4 rounded-2xl text-[14px] sm:text-[15px] leading-relaxed shadow-sm ${
           isUser 
             ? "bg-blue-600 text-white rounded-tr-none" 
             : isAdmin
