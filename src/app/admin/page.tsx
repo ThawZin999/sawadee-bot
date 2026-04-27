@@ -72,6 +72,36 @@ export default function AdminDashboard() {
 
   // --- Real-time Sync ---
   useEffect(() => {
+    if (!isAuthenticated) return;
+
+    // Listen to bookings
+    const bookingsQuery = query(collection(db, "bookings"), orderBy("createdAt", "desc"));
+    const unsubBookings = onSnapshot(bookingsQuery, (snapshot) => {
+      const bookings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Booking));
+      setData(prev => ({ ...prev, bookings }));
+    });
+
+    // Listen to tickets
+    const ticketsQuery = query(collection(db, "tickets"), orderBy("createdAt", "desc"));
+    const unsubTickets = onSnapshot(ticketsQuery, (snapshot) => {
+      const tickets = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Ticket));
+      setData(prev => ({ ...prev, tickets }));
+    });
+
+    // Listen to total sessions (chat_logs)
+    const chatsQuery = collection(db, "chat_logs");
+    const unsubChats = onSnapshot(chatsQuery, (snapshot) => {
+      setData(prev => ({ ...prev, totalSessions: snapshot.size }));
+    });
+
+    return () => {
+      unsubBookings();
+      unsubTickets();
+      unsubChats();
+    };
+  }, [isAuthenticated]);
+
+  useEffect(() => {
     if (!activeChatSession || !isAuthenticated) return;
 
     const q = query(
@@ -94,9 +124,9 @@ export default function AdminDashboard() {
     } else {
       setIsLoading(false);
     }
-    // Only run on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   const handleAdminReply = async (content: string) => {
     if (!activeChatSession) return;
@@ -135,13 +165,13 @@ export default function AdminDashboard() {
       setActiveChatSession(null);
       setActiveTicketId(null);
       setActiveTab("tickets");
-      fetchData();
     } catch (error) {
       console.error("Failed to close ticket:", error);
     } finally {
       setIsClosingTicket(false);
     }
   };
+
 
   const startChat = (sessionId: string, ticketId: string) => {
     setActiveChatSession(sessionId);
