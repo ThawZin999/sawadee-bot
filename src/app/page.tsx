@@ -8,6 +8,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Send, Bot, Loader2, Info } from "lucide-react";
 import { ChatMessage } from "@/lib/types";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger 
+} from "@/components/ui/dialog";
 
 // Firebase Client
 import { db } from "@/lib/firebase/config";
@@ -143,9 +151,43 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <Button variant="ghost" size="icon" className="text-slate-400 hover:text-slate-600">
-              <Info size={18} className="sm:w-5 sm:h-5" />
-            </Button>
+            <Dialog>
+              <DialogTrigger render={
+                <Button variant="ghost" size="icon" className="text-slate-400 hover:text-slate-600">
+                  <Info size={18} className="sm:w-5 sm:h-5" />
+                </Button>
+              } />
+              <DialogContent className="sm:max-w-md rounded-3xl">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2 text-xl">
+                    <div className="bg-blue-50 p-2 rounded-full text-blue-600">
+                      <Bot size={20} />
+                    </div>
+                    About SawadeeBot
+                  </DialogTitle>
+                  <DialogDescription className="pt-2 text-slate-600 leading-relaxed">
+                    SawadeeBot is your AI-powered companion at **ThaiTalk Language School**. 
+                    I'm here to make your Thai language journey smooth and enjoyable!
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-bold text-slate-900">What I can do:</h4>
+                    <ul className="text-sm text-slate-600 space-y-1.5 list-disc pl-4">
+                      <li>Answer questions about Thai grammar and vocabulary</li>
+                      <li>Provide details on our **Course Pricing** and **Schedules**</li>
+                      <li>Help you **Book a Class** with our expert teachers</li>
+                      <li>Seamlessly connect you to a human admin for complex requests</li>
+                    </ul>
+                  </div>
+                  <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                    <p className="text-xs text-slate-500 italic">
+                      "Whether you're a beginner or looking to polish your Thai, I'm available 24/7 to assist you."
+                    </p>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </CardHeader>
         
