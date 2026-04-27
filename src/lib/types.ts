@@ -41,3 +41,10 @@ export interface ChatLog {
   handoverActive?: boolean;
   handoverReason?: string;
 }
+
+export interface FAQ {
+  id?: string;
+  question: string;
+  answer: string;
+  category?: string;
+}

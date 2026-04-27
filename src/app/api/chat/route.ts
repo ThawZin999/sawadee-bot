@@ -48,9 +48,18 @@ export async function POST(req: Request) {
     const classesData = classesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     const classesContext = JSON.stringify(classesData, null, 2);
 
+    const faqsSnapshot = await adminDb!.collection("faqs").get();
+    const faqsData = faqsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const faqsContext = JSON.stringify(faqsData, null, 2);
+
     // 2. Prepare messages for OpenAI format
     const messages = [
-      { role: "system", content: SYSTEM_PROMPT + "\n\nAVAILABLE CLASSES:\n" + classesContext },
+      { 
+        role: "system", 
+        content: SYSTEM_PROMPT + 
+          "\n\nAVAILABLE CLASSES:\n" + classesContext + 
+          "\n\nFREQUENTLY ASKED QUESTIONS:\n" + faqsContext 
+      },
       ...history.map((m: { role: string; content: string }) => ({
         role: m.role === "assistant" ? "assistant" : "user",
         content: m.content,
