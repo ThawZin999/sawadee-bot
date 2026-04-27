@@ -35,24 +35,24 @@ export function AdminChat({
   };
 
   return (
-    <Card className="border-none shadow-sm h-[600px] flex flex-col overflow-hidden">
-      <CardHeader className="bg-blue-50/50 border-b border-blue-100">
-        <div className="flex items-center justify-between w-full">
+    <Card className="border-none shadow-sm h-[500px] sm:h-[600px] flex flex-col overflow-hidden">
+      <CardHeader className="bg-blue-50/50 border-b border-blue-100 p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-4">
           <div>
-            <CardTitle className="text-lg flex items-center gap-2 font-bold text-blue-900">
+            <CardTitle className="text-base sm:text-lg flex items-center gap-2 font-bold text-blue-900">
               <Bot size={20} />
-              Chat Session: {sessionId.slice(-8)}
+              <span className="truncate">Session: {sessionId.slice(-8)}</span>
             </CardTitle>
-            <CardDescription>Review history and respond to the student directly.</CardDescription>
+            <CardDescription className="text-xs sm:text-sm">Review history and respond directly.</CardDescription>
           </div>
           <Button
             variant="outline"
             size="sm"
-            className="border-blue-200 text-blue-600 hover:bg-blue-50 gap-2"
+            className="border-blue-200 text-blue-600 hover:bg-blue-50 gap-2 w-full sm:w-auto text-xs"
             onClick={onClose}
             disabled={isClosing}
           >
-            {isClosing ? "Closing..." : "Close Ticket & Re-enable AI"}
+            {isClosing ? "Closing..." : "Close & Re-enable AI"}
           </Button>
         </div>
       </CardHeader>

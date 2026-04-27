@@ -34,6 +34,10 @@ export async function POST(req: Request) {
           content: message,
           timestamp: new Date().toISOString(),
         });
+        await adminDb.collection("chat_logs").doc(sessionId).set({
+          lastUpdatedAt: new Date().toISOString(),
+          lastMessageSnippet: `User: ${message.substring(0, 60)}${message.length > 60 ? "..." : ""}`,
+        }, { merge: true });
       }
       return new Response("Our admin will respond to your message shortly. Please wait a moment...", {
         headers: { "Content-Type": "text/plain" },
@@ -172,7 +176,11 @@ async function handleActions(text: string, sessionId: string) {
     }
   }
   
+  const cleanText = text.replace(/\[ACTION:.*?\]/g, "").trim();
+  const snippet = cleanText.substring(0, 60) + (cleanText.length > 60 ? "..." : "");
+
   await adminDb.collection("chat_logs").doc(sessionId).set({
     lastUpdatedAt: new Date().toISOString(),
+    lastMessageSnippet: `Bot: ${snippet || "Action executed"}`,
   }, { merge: true });
 }

@@ -2,23 +2,24 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, MessageSquare, AlertCircle, RefreshCcw, Lock } from "lucide-react";
+import { Calendar, MessageSquare, AlertCircle, RefreshCcw, Lock, Activity, Archive } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { db } from "@/lib/firebase/config";
-import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
-import { Ticket, Booking, ChatMessage } from "@/lib/types";
+import { collection, query, orderBy, onSnapshot, limit } from "firebase/firestore";
+import { Ticket, Booking, ChatMessage, ChatLog } from "@/lib/types";
 
 // Extracted Components
 import { StatsCards } from "@/components/admin/StatsCards";
-import { BookingItem, TicketItem } from "@/components/admin/Items";
+import { BookingItem, TicketItem, ChatSessionItem } from "@/components/admin/Items";
 import { AdminChat } from "@/components/admin/AdminChat";
 
 export default function AdminDashboard() {
   // --- State ---
-  const [data, setData] = useState<{ bookings: Booking[]; tickets: Ticket[]; totalSessions: number }>({ 
+  const [data, setData] = useState<{ bookings: Booking[]; tickets: Ticket[]; chats: ChatLog[]; totalSessions: number }>({ 
     bookings: [], 
     tickets: [], 
+    chats: [],
     totalSessions: 0 
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -88,10 +89,11 @@ export default function AdminDashboard() {
       setData(prev => ({ ...prev, tickets }));
     });
 
-    // Listen to total sessions (chat_logs)
-    const chatsQuery = collection(db, "chat_logs");
+    // Listen to chat sessions
+    const chatsQuery = query(collection(db, "chat_logs"), orderBy("lastUpdatedAt", "desc"), limit(50));
     const unsubChats = onSnapshot(chatsQuery, (snapshot) => {
-      setData(prev => ({ ...prev, totalSessions: snapshot.size }));
+      const chats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ChatLog));
+      setData(prev => ({ ...prev, chats }));
     });
 
     return () => {
@@ -175,9 +177,9 @@ export default function AdminDashboard() {
   };
 
 
-  const startChat = (sessionId: string, ticketId: string) => {
+  const startChat = (sessionId: string, ticketId?: string) => {
     setActiveChatSession(sessionId);
-    setActiveTicketId(ticketId);
+    setActiveTicketId(ticketId || null);
     setActiveTab("chat");
   };
 
@@ -185,6 +187,26 @@ export default function AdminDashboard() {
   const conversionRate = data.totalSessions > 0 
     ? Math.min(100, (new Set(data.bookings.map(b => b.sessionId)).size / data.totalSessions) * 100).toFixed(1) 
     : "0";
+
+  const actionedSessionIds = new Set([
+    ...data.bookings.map(b => b.sessionId),
+    ...data.tickets.map(t => t.sessionId)
+  ]);
+  
+  const now = new Date().getTime();
+  const activeChats = (data.chats || []).filter(c => {
+    const sId = c.id || c.sessionId;
+    if (actionedSessionIds.has(sId)) return false;
+    const timeDiff = now - new Date(c.lastUpdatedAt).getTime();
+    return timeDiff < 2 * 60 * 60 * 1000;
+  });
+
+  const archivedChats = (data.chats || []).filter(c => {
+    const sId = c.id || c.sessionId;
+    if (actionedSessionIds.has(sId)) return false;
+    const timeDiff = now - new Date(c.lastUpdatedAt).getTime();
+    return timeDiff >= 2 * 60 * 60 * 1000;
+  });
 
   if (!isAuthenticated) {
     return (
@@ -250,20 +272,31 @@ export default function AdminDashboard() {
         />
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-6 bg-slate-200/50 p-1 rounded-xl">
-            <TabsTrigger value="bookings" className="gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-lg">
-              <Calendar size={16} /> Bookings
-            </TabsTrigger>
-            <TabsTrigger value="tickets" className="gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-lg">
-              <AlertCircle size={16} /> Support Tickets
-            </TabsTrigger>
-            <TabsTrigger 
-              value="chat" 
-              className={`gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm text-blue-600 rounded-lg ${!activeChatSession ? "hidden" : ""}`}
-            >
-              <MessageSquare size={16} /> Active Chat
-            </TabsTrigger>
-          </TabsList>
+          <div className="relative mb-6">
+            <TabsList className="w-full flex h-auto p-1 bg-slate-200/50 rounded-xl overflow-x-auto scrollbar-hide justify-start sm:justify-center gap-1 relative">
+              <TabsTrigger value="bookings" className="flex-shrink-0 gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-lg py-2 px-3 sm:px-4">
+                <Calendar size={16} /> <span className="hidden md:inline">Bookings</span>
+              </TabsTrigger>
+              <TabsTrigger value="tickets" className="flex-shrink-0 gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-lg py-2 px-3 sm:px-4">
+                <AlertCircle size={16} /> <span className="hidden md:inline">Tickets</span>
+              </TabsTrigger>
+              <TabsTrigger value="monitor" className="flex-shrink-0 gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-lg py-2 px-3 sm:px-4 relative">
+                <Activity size={16} /> <span className="hidden md:inline">Monitor</span>
+                {activeChats.length > 0 && (
+                  <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-blue-500"></span>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="archive" className="flex-shrink-0 gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-lg py-2 px-3 sm:px-4">
+                <Archive size={16} /> <span className="hidden md:inline">Archive</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="chat" 
+                className={`flex-shrink-0 gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm text-blue-600 rounded-lg py-2 px-3 sm:px-4 ${!activeChatSession ? "hidden" : ""}`}
+              >
+                <MessageSquare size={16} /> <span className="hidden md:inline">Active Chat</span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="bookings" className="space-y-4">
             {data.bookings.length === 0 ? (
@@ -286,6 +319,30 @@ export default function AdminDashboard() {
             ) : (
               <div className="grid grid-cols-1 gap-4">
                 {data.tickets.map((ticket) => <TicketItem key={ticket.id} ticket={ticket} onChat={startChat} />)}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="monitor" className="space-y-4">
+            {activeChats.length === 0 ? (
+              <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-slate-200 text-slate-400">
+                No active live sessions right now.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4">
+                {activeChats.map((chat) => <ChatSessionItem key={chat.id} chat={chat} onChat={startChat} />)}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="archive" className="space-y-4">
+            {archivedChats.length === 0 ? (
+              <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-slate-200 text-slate-400">
+                No archived chats available.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4">
+                {archivedChats.map((chat) => <ChatSessionItem key={chat.id} chat={chat} onChat={startChat} />)}
               </div>
             )}
           </TabsContent>

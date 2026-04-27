@@ -15,17 +15,19 @@ export async function GET(req: Request) {
   }
 
   try {
-    const [bookingsSnap, ticketsSnap, chatsSnap] = await Promise.all([
+    const [bookingsSnap, ticketsSnap, chatsSnap, countSnap] = await Promise.all([
       adminDb.collection("bookings").orderBy("createdAt", "desc").get(),
       adminDb.collection("tickets").orderBy("createdAt", "desc").get(),
-      adminDb.collection("chat_logs").get(),
+      adminDb.collection("chat_logs").orderBy("lastUpdatedAt", "desc").limit(50).get(),
+      adminDb.collection("chat_logs").count().get(),
     ]);
 
     const bookings = bookingsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     const tickets = ticketsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    const totalSessions = chatsSnap.size;
+    const chats = chatsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const totalSessions = countSnap.data().count;
 
-    return Response.json({ bookings, tickets, totalSessions });
+    return Response.json({ bookings, tickets, chats, totalSessions });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     console.error("Admin Data Error:", message);

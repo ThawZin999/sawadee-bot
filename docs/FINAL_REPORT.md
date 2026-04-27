@@ -40,20 +40,25 @@ Generative AI (Large Language Model) using **Google Gemini 3.1 Flash Lite** (via
 4. **Action Parsing:** The system detects structured strings (e.g., `[ACTION:BOOKING]`) to trigger database writes for bookings or support tickets.
 5. **Human Handover:** If the AI detects a complex request, it triggers `[ACTION:HANDOVER]`, alerting a human admin who can then take over the live chat in real-time.
 6. **Output:** A streaming markdown response is sent back to the React-based chat interface.
+7. **Admin Monitoring (Three-Tier Dashboard):** Admins monitor sessions through a specialized dashboard categorized into:
+   - **Priority:** Actionable bookings and support tickets.
+   - **Monitor:** Real-time live sessions with "Live" status indicators.
+   - **Archive:** Historical logs of all past interactions.
 
 ---
 
 ## 4. Technology Selection
 ### Hardware
 - **Infrastructure:** Vercel Edge Network (Serverless).
-- **Client:** Mobile-responsive web interface for any modern browser.
+- **Client:** Fully responsive PWA-ready web interface optimized for mobile and desktop.
 
 ### Software & Tools
 - **Framework:** Next.js 15 (App Router).
 - **Logic:** TypeScript.
-- **UI:** Tailwind CSS + Shadcn UI.
+- **UI:** Tailwind CSS + Shadcn UI (Customized for premium aesthetics).
 - **Database:** Firebase (Firestore & Admin SDK).
 - **AI Component:** Google Generative AI (Gemini 3.1 Flash Lite via OpenRouter).
+- **UX Enhancements:** Horizontal scrollable tabs with responsive labels and pulsing "Live" indicators for admin oversight.
 
 ---
 

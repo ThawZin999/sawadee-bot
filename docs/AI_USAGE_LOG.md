@@ -70,6 +70,13 @@ The project was built in four distinct "Sprints," each adding a layer of complex
 - **Feature Add**: Calculated the "AI Conversion Rate" by comparing unique session IDs in `/chat_logs` vs. `/bookings`.
 - **Optimization**: Switched from `any` to strict TypeScript interfaces to prevent runtime crashes.
 
+### Milestone 5: The "Scale" Phase
+- **Focus**: Efficiency and Mobile UX.
+- **Problem**: Admin dashboard became cluttered as session counts grew.
+- **Correction**: Implemented a **Three-Tier Dashboard** (Priority, Monitor, Archive). 
+- **AI-Driven Optimization**: Instead of fetching all chats, the AI suggested saving a `lastMessageSnippet` on the session document and using a `limit(50)` query to keep the dashboard high-performance.
+- **UI UX**: Refined the dashboard tabs for mobile using horizontal scrolling, pulsing "Live" indicators, and icon-only triggers on small screens.
+
 ---
 
 ## 4. Key AI Prompts for UI/UX
@@ -82,11 +89,14 @@ To achieve the "Premium" look, specific design prompts were used:
 **The "Real-time Dashboard" Prompt:**
 > "Create a dashboard using Shadcn Tabs. One tab for 'Overview' with stats, one for 'Tickets', and one for 'Active Chat'. The Active Chat should have a list of users on the left and the chat window on the right."
 
+**The "Mobile Tab" Prompt:**
+> "Redesign the dashboard tabs for mobile. Make them horizontally scrollable with a hide-scrollbar utility, and add a fade effect on the edges. On very small screens, hide the labels and show only icons to save space."
+
 ---
 
 ## 5. Summary of AI-Human Collaboration
 The development was a loop:
-1. **Human** defines the business rule (e.g., "Refunds need a human").
-2. **AI** suggests the technical implementation (e.g., "Use a specific action tag").
-3. **Human** identifies a bug (e.g., "The tag is visible to the user").
-4. **AI** provides the code fix (e.g., "Regex filter in the component").
+1. **Human** defines the business rule (e.g., "I want to see all chats but don't want it to be messy").
+2. **AI** suggests the technical implementation (e.g., "Use a three-tier system with session snippets and limits").
+3. **Human** identifies a UX gap (e.g., "The tabs are too crowded on my phone").
+4. **AI** provides the styling fix (e.g., "Tailwind horizontal scroll and custom breakpoints").

@@ -33,7 +33,11 @@ export interface ChatMessage {
 }
 
 export interface ChatLog {
+  id?: string;
   sessionId: string;
-  messages: ChatMessage[];
+  messages?: ChatMessage[];
   lastUpdatedAt: string; // ServerTimestamp ISO string
+  lastMessageSnippet?: string;
+  handoverActive?: boolean;
+  handoverReason?: string;
 }
