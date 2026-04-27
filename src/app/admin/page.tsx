@@ -86,14 +86,17 @@ export default function AdminDashboard() {
     return () => unsubscribe();
   }, [activeChatSession, isAuthenticated]);
 
+  // --- Auto-login on mount if session exists ---
   useEffect(() => {
-    if (password) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      fetchData(password);
+    const savedPwd = sessionStorage.getItem("admin_pwd");
+    if (savedPwd) {
+      fetchData(savedPwd);
     } else {
       setIsLoading(false);
     }
-  }, [fetchData, password]);
+    // Only run on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleAdminReply = async (content: string) => {
     if (!activeChatSession) return;
