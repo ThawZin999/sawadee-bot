@@ -120,12 +120,14 @@ export default function AdminDashboard() {
   useEffect(() => {
     const savedPwd = sessionStorage.getItem("admin_pwd");
     if (savedPwd) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchData(savedPwd);
     } else {
       setIsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
 
   const handleAdminReply = async (content: string) => {
@@ -270,8 +272,9 @@ export default function AdminDashboard() {
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-4">
-                {data.bookings.map((booking) => <BookingItem key={booking.id} booking={booking} />)}
+                {data.bookings.map((booking) => <BookingItem key={booking.id} booking={booking} onChat={startChat} />)}
               </div>
+
             )}
           </TabsContent>
 

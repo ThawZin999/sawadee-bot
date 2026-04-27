@@ -8,36 +8,62 @@ import { Booking, Ticket } from "@/lib/types";
 
 interface BookingItemProps {
   booking: Booking;
+  onChat: (sessionId: string, ticketId: string) => void;
 }
 
-export function BookingItem({ booking }: BookingItemProps) {
+export function BookingItem({ booking, onChat }: BookingItemProps) {
   return (
     <Card className="overflow-hidden border-none shadow-sm hover:shadow-md transition-shadow">
-      <CardContent className="p-6">
+      <CardContent className="p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="bg-blue-50 p-3 rounded-2xl text-blue-600">
-              <User size={24} />
-            </div>
-            <div>
-              <div className="font-bold text-lg text-slate-900">{booking.fullName}</div>
-              <div className="text-sm text-slate-500 flex items-center gap-1">
-                <Mail size={12} /> {booking.email}
+          <div className="flex items-center justify-between w-full sm:w-auto">
+            <div className="flex items-center gap-4">
+              <div className="bg-blue-50 p-2.5 sm:p-3 rounded-2xl text-blue-600">
+                <User size={20} className="sm:w-6 sm:h-6" />
+              </div>
+              <div>
+                <div className="font-bold text-base sm:text-lg text-slate-900 leading-tight">{booking.fullName}</div>
+                <div className="text-xs sm:text-sm text-slate-500 flex items-center gap-1 mt-0.5">
+                  <Mail size={12} /> {booking.email}
+                </div>
               </div>
             </div>
+            {/* Mobile Chat Button */}
+            <div className="sm:hidden">
+              <Button 
+                size="sm" 
+                variant="default" 
+                className="bg-blue-600 hover:bg-blue-700 h-7 text-[11px] rounded-full px-3 gap-1 shadow-sm"
+                onClick={() => onChat(booking.sessionId, booking.id || "")}
+              >
+                Chat
+              </Button>
+            </div>
           </div>
-          <div className="flex items-center gap-8">
+          
+          <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-8 border-t sm:border-none pt-3 sm:pt-0">
             <div>
-              <div className="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1">Class Interest</div>
-              <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-none px-3 py-1">
+              <div className="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-0.5">Class</div>
+              <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-none px-2 py-0.5 text-[11px] sm:text-xs">
                 {booking.classInterest}
               </Badge>
             </div>
             <div className="text-right">
-              <div className="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1">Registered</div>
-              <div className="text-sm font-semibold text-slate-700">
-                {new Date(booking.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+              <div className="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-0.5">Registered</div>
+              <div className="text-xs sm:text-sm font-semibold text-slate-700">
+                {new Date(booking.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
               </div>
+            </div>
+            {/* Desktop Chat Button */}
+            <div className="hidden sm:block">
+              <Button 
+                size="sm" 
+                variant="default" 
+                className="bg-blue-600 hover:bg-blue-700 h-7 text-[11px] rounded-full px-3 gap-1 shadow-sm"
+                onClick={() => onChat(booking.sessionId, booking.id || "")}
+              >
+                Chat
+              </Button>
             </div>
           </div>
         </div>
@@ -45,6 +71,7 @@ export function BookingItem({ booking }: BookingItemProps) {
     </Card>
   );
 }
+
 
 interface TicketItemProps {
   ticket: Ticket;
@@ -73,11 +100,12 @@ export function TicketItem({ ticket, onChat }: TicketItemProps) {
                 className="bg-blue-600 hover:bg-blue-700 h-7 text-[11px] rounded-full px-3 gap-1"
                 onClick={() => ticket.id && onChat(ticket.sessionId, ticket.id)}
               >
-                Chat with Student
+                Chat
               </Button>
             )}
           </div>
         </div>
+
         <CardDescription className="pt-1">
           Case ID: {ticket.id ? ticket.id.slice(0, 8) : "N/A"} • Created on {new Date(ticket.createdAt).toLocaleString()}
         </CardDescription>

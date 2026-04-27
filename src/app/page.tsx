@@ -49,9 +49,10 @@ export default function Home() {
 
     const initialGreeting: ChatMessage = {
       role: "assistant",
-      content: "Sawasdee kha! I&apos;m SawadeeBot. How can I help you with your Thai language learning today?",
+      content: "Sawasdee kha! I'm SawadeeBot. How can I help you with your Thai language learning today?",
       timestamp: new Date().toISOString(),
     };
+
 
     // Listen for database changes
     const q = query(
@@ -167,7 +168,7 @@ export default function Home() {
                   </DialogTitle>
                   <DialogDescription className="pt-2 text-slate-600 leading-relaxed">
                     SawadeeBot is your AI-powered companion at **ThaiTalk Language School**. 
-                    I'm here to make your Thai language journey smooth and enjoyable!
+                    I&apos;m here to make your Thai language journey smooth and enjoyable!
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
@@ -182,7 +183,7 @@ export default function Home() {
                   </div>
                   <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
                     <p className="text-xs text-slate-500 italic">
-                      "Whether you're a beginner or looking to polish your Thai, I'm available 24/7 to assist you."
+                      &quot;Whether you&apos;re a beginner or looking to polish your Thai, I&apos;m available 24/7 to assist you.&quot;
                     </p>
                   </div>
                 </div>
